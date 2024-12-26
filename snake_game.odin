@@ -45,7 +45,10 @@ main :: proc() {
 
     is_game_over := false
 
-    snake : ^game.Snake = game.create_snake(position = grid_centre)
+    snake := game.create_snake(position = grid_centre)
+    food := game.create_food({0, 0})
+
+    game.place_food(food, &grid, snake)
 
     for !rl.WindowShouldClose() {
         is_game_over = game.is_hitting_wall(snake, &grid)
@@ -54,6 +57,7 @@ main :: proc() {
             if rl.IsKeyDown(.ENTER)
             {
                 game.reset_snake(snake, length = 3, position = grid_centre)
+                game.place_food(food, &grid, snake)
                 is_game_over = false
             }
         }
@@ -78,11 +82,13 @@ main :: proc() {
         rl.BeginMode2D(camera)
 
         game.draw_snake(snake, grid.cell_size)
+        game.draw_food(food, grid.cell_size)
 
         rl.EndMode2D()
         rl.EndDrawing()
     }
 
     game.remove_snake(snake)
+    game.remove_food(food)
     rl.CloseWindow()
 }
