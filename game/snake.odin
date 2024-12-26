@@ -8,7 +8,7 @@ Snake :: struct {
     sections : [dynamic]Vec2i
 }
 
-create_snake :: proc (position: Vec2i, length: i32, dir: Vec2i) -> (new_snake : ^Snake) {
+create_snake :: proc (position: Vec2i = {0, 0}, length: i32 = 3, dir: Vec2i = {0, 1}) -> (new_snake : ^Snake) {
     if length <= 0 {
         return new_snake
     }
