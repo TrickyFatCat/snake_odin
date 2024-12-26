@@ -42,13 +42,6 @@ calc_food_position :: proc(grid: ^Grid, snake: ^Snake) -> (new_position : Vec2i)
         return new_position
     }
 
-    // occupied_cells := make([dynamic][dynamic]bool, context.temp_allocator)
-
-    // for i in 0..<get_snake_length(snake){
-        // inject_at(&occupied_cells, [snake.sections[i].x, snake.sections[i].y], true) 
-        // inject_at(&occupied_cells, i, true)
-    // }
-
     free_cells := make([dynamic]Vec2i, context.temp_allocator)
     position: Vec2i
 
@@ -69,7 +62,6 @@ calc_food_position :: proc(grid: ^Grid, snake: ^Snake) -> (new_position : Vec2i)
         new_position = free_cells[random_cell_index]
     }
 
-    // delete(occupied_cells)
     delete(free_cells)
     
     return new_position
