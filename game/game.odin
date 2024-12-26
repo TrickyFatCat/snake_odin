@@ -61,7 +61,7 @@ is_hitting_wall :: proc(snake: ^Snake, grid: ^Grid) -> bool {
         return true
     }
 
-    next_cell := get_head_pos(snake) + snake.movement_dir
+    next_cell := get_head_pos(snake)
 
     if next_cell.x < 0 || next_cell.x >= grid.size.x {
         return true
@@ -82,4 +82,12 @@ reset_snake ::proc(snake: ^Snake, length: i32, position: Vec2i, movement_dir: Ve
     trim_snake(snake, length)
     snake.movement_dir = movement_dir
     set_snake_position(snake, position)
+}
+
+snake_can_eat :: proc(snake: ^Snake, food: ^Food) -> bool {
+    if snake == nil && food == nil {
+        return false
+    }
+
+    return get_head_pos(snake) == food.position
 }

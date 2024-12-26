@@ -51,8 +51,6 @@ main :: proc() {
     game.place_food(food, &grid, snake)
 
     for !rl.WindowShouldClose() {
-        is_game_over = game.is_hitting_wall(snake, &grid)
-
         if is_game_over {
             if rl.IsKeyDown(.ENTER)
             {
@@ -69,6 +67,13 @@ main :: proc() {
 
         if tick_timer <= 0.0 && !is_game_over {
             game.move_snake(snake)
+            is_game_over = game.is_hitting_wall(snake, &grid)
+
+            if game.snake_can_eat(snake, food) {
+                game.incrment_snake(snake)
+                game.place_food(food, &grid, snake)
+            }
+
             tick_timer = DEFAULT_TICK_DURATION + tick_timer
         }
 

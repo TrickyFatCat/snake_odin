@@ -100,8 +100,8 @@ trim_snake :: proc(snake: ^Snake, new_length: i32 = 3) {
         return
     }
 
-    for i in new_length..<snake_length {
-        ordered_remove(&snake.sections, i)
+    for i in 0..<(snake_length - new_length) {
+        pop(&snake.sections)
     }
 }
 
@@ -115,4 +115,14 @@ set_snake_position :: proc(snake: ^Snake, new_pos: Vec2i) {
     for i in 1..<get_snake_length(snake) {
         snake.sections[i] = snake.sections[0] - snake.movement_dir * {0, i}
     }
+}
+
+incrment_snake :: proc(snake: ^Snake) {
+    if snake == nil {
+        return
+    }
+
+    cur_length := get_snake_length(snake) - 1
+    new_section_pos := snake.sections[cur_length] - {0, 1} * snake.movement_dir
+    append(&snake.sections, new_section_pos)
 }
