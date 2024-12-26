@@ -67,7 +67,7 @@ main :: proc() {
 
         if tick_timer <= 0.0 && !is_game_over {
             game.move_snake(snake)
-            is_game_over = game.is_hitting_wall(snake, &grid)
+            is_game_over = game.is_hitting_wall(snake, &grid) || game.is_hitting_self(snake)
 
             if game.snake_can_eat(snake, food) {
                 game.incrment_snake(snake)

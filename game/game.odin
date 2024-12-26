@@ -74,6 +74,22 @@ is_hitting_wall :: proc(snake: ^Snake, grid: ^Grid) -> bool {
     return false
 }
 
+is_hitting_self :: proc(snake: ^Snake) -> bool {
+    if snake == nil {
+        return true
+    }
+
+    head_pos := get_head_pos(snake)
+
+    for i in 1..<get_snake_length(snake) {
+        if snake.sections[i] == head_pos {
+            return true
+        }
+    }
+
+    return false
+}
+
 reset_snake ::proc(snake: ^Snake, length: i32, position: Vec2i, movement_dir: Vec2i = {0, 1}){
     if snake == nil {
         return
