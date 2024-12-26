@@ -3,7 +3,6 @@ package game
 import rl "vendor:raylib"
 
 Snake :: struct {
-    length: i32,
     movement_dir : Vec2i,
     sections : [dynamic]Vec2i
 }
@@ -21,7 +20,6 @@ create_snake :: proc (position: Vec2i = {0, 0}, length: i32 = 3, dir: Vec2i = {0
         new_snake.sections[i] = new_snake.sections[0] - dir * {0, i}
     }
 
-    new_snake.length = length
     new_snake.movement_dir = dir
     return new_snake
 }
@@ -57,7 +55,7 @@ move_snake :: proc(snake: ^Snake) {
     next_pos := cur_pos
     snake.sections[0] += snake.movement_dir
 
-    for i in 1..<snake.length {
+    for i in 1..<len(&snake.sections) {
         cur_pos = snake.sections[i]
         snake.sections[i] = next_pos
         next_pos = cur_pos
@@ -80,5 +78,41 @@ draw_snake :: proc(snake: ^Snake, sprite_size: i32) {
     for i in 0..<len(&snake.sections) {
         color := rl.YELLOW if i == 0 else rl.GREEN
         draw_sprite(snake.sections[i], sprite_size, color)
+    }
+}
+
+get_snake_length :: proc (snake: ^Snake) -> i32 { 
+    if snake == nil {
+        return -1
+    }
+
+    return i32(len(snake.sections))
+}
+
+trim_snake :: proc(snake: ^Snake, new_length: i32 = 3) {
+    if snake == nil || new_length <= 0{
+        return
+    }
+
+    snake_length := get_snake_length(snake)
+
+    if (new_length >= snake_length) {
+        return
+    }
+
+    for i in new_length..<snake_length {
+        ordered_remove(&snake.sections, i)
+    }
+}
+
+set_snake_position :: proc(snake: ^Snake, new_pos: Vec2i) {
+    if snake == nil {
+        return
+    }
+
+    snake.sections[0] = new_pos
+
+    for i in 1..<get_snake_length(snake) {
+        snake.sections[i] = snake.sections[0] - snake.movement_dir * {0, i}
     }
 }

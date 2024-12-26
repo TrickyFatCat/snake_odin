@@ -43,25 +43,40 @@ main :: proc() {
     grid_centre := game.get_grid_centre_pos(&grid)
     canvas_size : i32 = game.calc_canvas_size(&grid)
 
+    is_game_over := false
+
     snake : ^game.Snake = game.create_snake(position = grid_centre)
 
     for !rl.WindowShouldClose() {
-        rl.BeginDrawing()
-        rl.ClearBackground(rl.GRAY)
+        is_game_over = game.is_hitting_wall(snake, &grid)
 
-        tick_timer -= rl.GetFrameTime()
-        game.change_snake_movement_dir(snake, game.calc_snake_dir(snake.movement_dir))
+        if is_game_over {
+            if rl.IsKeyDown(.ENTER)
+            {
+                game.reset_snake(snake, length = 3, position = grid_centre)
+                is_game_over = false
+            }
+        }
+        else
+        {
+            tick_timer -= rl.GetFrameTime()
+            game.change_snake_movement_dir(snake, game.calc_snake_dir(snake.movement_dir))
+        }
 
-        if tick_timer <= 0.0 {
+        if tick_timer <= 0.0 && !is_game_over {
             game.move_snake(snake)
             tick_timer = DEFAULT_TICK_DURATION + tick_timer
         }
+
+        rl.BeginDrawing()
+        rl.ClearBackground(rl.GRAY)
 
         camera := rl.Camera2D {
             zoom = f32(WINDOW_HEIGHT) / f32(canvas_size)
         }
 
         rl.BeginMode2D(camera)
+
         game.draw_snake(snake, grid.cell_size)
 
         rl.EndMode2D()

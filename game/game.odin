@@ -55,3 +55,31 @@ calc_snake_dir :: proc(cur_dir: Vec2i) -> Vec2i{
 
     return cur_dir
 }
+
+is_hitting_wall :: proc(snake: ^Snake, grid: ^Grid) -> bool {
+    if snake == nil {
+        return true
+    }
+
+    next_cell := get_head_pos(snake) + snake.movement_dir
+
+    if next_cell.x < 0 || next_cell.x >= grid.size.x {
+        return true
+    }
+
+    if next_cell.y < 0 || next_cell.y >= grid.size.y {
+        return true
+    }
+
+    return false
+}
+
+reset_snake ::proc(snake: ^Snake, length: i32, position: Vec2i, movement_dir: Vec2i = {0, 1}){
+    if snake == nil {
+        return
+    }
+
+    trim_snake(snake, length)
+    snake.movement_dir = movement_dir
+    set_snake_position(snake, position)
+}
