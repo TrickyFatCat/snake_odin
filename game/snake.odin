@@ -64,6 +64,14 @@ move_snake :: proc(snake: ^Snake) {
     }
 }
 
+change_snake_movement_dir :: proc(snake: ^Snake, new_dir: Vec2i) {
+    if snake == nil {
+        return
+    }
+
+    snake.movement_dir = new_dir
+}
+
 draw_snake :: proc(snake: ^Snake, sprite_size: i32) {
     if snake == nil {
         return

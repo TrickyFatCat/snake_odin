@@ -11,7 +11,6 @@ WINDOW_NAME : cstring : "Snake"
 DEFAULT_TICK_DURATION :: 0.15
 
 main :: proc() {
-
     // Taken from www.odin-lang.com
     when ODIN_DEBUG {
         track: mem.Tracking_Allocator
@@ -39,8 +38,8 @@ main :: proc() {
     rl.InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_NAME)
 
     tick_timer : f32 = DEFAULT_TICK_DURATION
-    grid : game.Grid = {size = {20, 20}, cell_size = 16}
 
+    grid : game.Grid = {size = {20, 20}, cell_size = 16}
     grid_centre := game.get_grid_centre_pos(&grid)
     canvas_size : i32 = game.calc_canvas_size(&grid)
 
@@ -51,6 +50,7 @@ main :: proc() {
         rl.ClearBackground(rl.GRAY)
 
         tick_timer -= rl.GetFrameTime()
+        game.change_snake_movement_dir(snake, game.calc_snake_dir(snake.movement_dir))
 
         if tick_timer <= 0.0 {
             game.move_snake(snake)
