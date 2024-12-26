@@ -48,6 +48,22 @@ get_head_pos :: proc(snake: ^Snake) -> Vec2i {
     return snake.sections[0]
 }
 
+move_snake :: proc(snake: ^Snake) {
+    if snake == nil {
+        return
+    }
+    
+    cur_pos := snake.sections[0]
+    next_pos := cur_pos
+    snake.sections[0] += snake.movement_dir
+
+    for i in 1..<snake.length {
+        cur_pos = snake.sections[i]
+        snake.sections[i] = next_pos
+        next_pos = cur_pos
+    }
+}
+
 draw_snake :: proc(snake: ^Snake, sprite_size: i32) {
     if snake == nil {
         return
