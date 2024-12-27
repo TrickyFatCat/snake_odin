@@ -4,6 +4,7 @@ import rl "vendor:raylib"
 
 Vec2i :: [2]i32
 
+VEC_ZERO  : Vec2i : {0, 0}
 VEC_UP    : Vec2i : {0, -1}
 VEC_DOWN  : Vec2i : {0, 1}
 VEC_LEFT  : Vec2i : {-1, 0}
