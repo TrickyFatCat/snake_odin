@@ -34,9 +34,11 @@ main :: proc() {
         }
 	}
 	
+    //Game
     rl.SetConfigFlags({.VSYNC_HINT})
     rl.InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_NAME)
 
+    //Initialisation
     tick_timer : f32 = DEFAULT_TICK_DURATION
 
     grid : game.Grid = {size = {20, 20}, cell_size = 16}
@@ -50,7 +52,9 @@ main :: proc() {
 
     game.place_food(food, &grid, snake)
 
+    //Main Loop
     for !rl.WindowShouldClose() {
+        //Gameplay
         if is_game_over {
             if rl.IsKeyDown(.ENTER)
             {
@@ -77,6 +81,7 @@ main :: proc() {
             tick_timer = DEFAULT_TICK_DURATION + tick_timer
         }
 
+        //Visuals
         rl.BeginDrawing()
         rl.ClearBackground(rl.GRAY)
 
