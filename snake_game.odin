@@ -9,6 +9,8 @@ WINDOW_WIDTH :: 1000
 WINDOW_HEIGHT :: 1000
 WINDOW_NAME : cstring : "Snake"
 DEFAULT_TICK_DURATION :: 0.15
+DEFAULT_GRID_SIZE : game.Vec2i : {20, 20}
+DEFAULT_CELL_SIZE :: 16
 
 main :: proc() {
     // Taken from www.odin-lang.com
@@ -41,7 +43,7 @@ main :: proc() {
     //Initialisation
     tick_timer : f32 = DEFAULT_TICK_DURATION
 
-    grid : game.Grid = {size = {20, 20}, cell_size = 16}
+    grid : game.Grid = {DEFAULT_GRID_SIZE, DEFAULT_CELL_SIZE}
     grid_centre := game.get_grid_centre_pos(&grid)
     canvas_size : i32 = game.calc_canvas_size(&grid)
 
