@@ -3,11 +3,12 @@ package game
 import rl "vendor:raylib"
 
 Snake :: struct {
-    movement_dir : Vec2i,
-    sections : [dynamic]Vec2i
+    movement_dir: Vec2i,
+    sprites: [3]rl.Texture2D,
+    sections: [dynamic]Vec2i
 }
 
-create_snake :: proc (position: Vec2i = VEC_ZERO, length: i32 = 3, dir: Vec2i = VEC_DOWN) -> (new_snake : ^Snake) {
+create_snake :: proc (position: Vec2i = VEC_ZERO, length: i32 = 3, dir: Vec2i = VEC_DOWN, sprites: [3]cstring) -> (new_snake : ^Snake) {
     if length <= 0 {
         return new_snake
     }
@@ -21,6 +22,18 @@ create_snake :: proc (position: Vec2i = VEC_ZERO, length: i32 = 3, dir: Vec2i = 
     }
 
     new_snake.movement_dir = dir
+
+    address: cstring
+
+    for i in 0..<len(sprites) {
+        address = sprites[i]
+
+        if len(address) < 0 {
+            continue
+        }
+
+        new_snake.sprites[i] = rl.LoadTexture(address)
+    }
     return new_snake
 }
 
@@ -75,9 +88,32 @@ draw_snake :: proc(snake: ^Snake, sprite_size: i32) {
         return
     }
 
-    for i in 0..<len(&snake.sections) {
-        color := rl.YELLOW if i == 0 else rl.GREEN
-        draw_rectangle(snake.sections[i], sprite_size, color)
+    last_index := len(&snake.sections) - 1
+    sprite: ^rl.Texture2D
+    section: Vec2i
+    texture_size: rl.Vector2
+
+
+    for i in 0..=last_index{
+        switch i {
+        case 0:
+            sprite = &snake.sprites[0]
+        case last_index:
+            sprite = &snake.sprites[2]
+        case:
+            sprite = &snake.sprites[1]
+        }
+
+        sprite = &snake.sprites[i]
+        section = snake.sections[i]
+
+        if sprite == nil {
+            draw_rectangle(section, sprite_size, rl.MAGENTA)
+            continue
+        }
+        
+        texture_size = {f32(section.x), f32(section.y)} * f32(sprite_size) 
+        rl.DrawTextureV(sprite^, texture_size, rl.WHITE)
     }
 }
 
