@@ -39,6 +39,7 @@ main :: proc() {
     //Game
     rl.SetConfigFlags({.VSYNC_HINT})
     rl.InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_NAME)
+    rl.SetTargetFPS(60)
 
     //Initialisation
     tick_timer : f32 = DEFAULT_TICK_DURATION
