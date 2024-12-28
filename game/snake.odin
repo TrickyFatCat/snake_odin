@@ -77,7 +77,7 @@ draw_snake :: proc(snake: ^Snake, sprite_size: i32) {
 
     for i in 0..<len(&snake.sections) {
         color := rl.YELLOW if i == 0 else rl.GREEN
-        draw_sprite(snake.sections[i], sprite_size, color)
+        draw_rectangle(snake.sections[i], sprite_size, color)
     }
 }
 

@@ -8,9 +8,14 @@ import "game"
 WINDOW_WIDTH :: 1000
 WINDOW_HEIGHT :: 1000
 WINDOW_NAME : cstring : "Snake"
+
+// Defaults
 DEFAULT_TICK_DURATION :: 0.15
 DEFAULT_GRID_SIZE : game.Vec2i : {20, 20}
 DEFAULT_CELL_SIZE :: 16
+
+// Visuals
+FOOD_SPRITE : cstring : "../assets/sprites/sprite_food.png" 
 
 main :: proc() {
     // Taken from www.odin-lang.com
@@ -51,7 +56,7 @@ main :: proc() {
     is_game_over := false
 
     snake := game.create_snake(position = grid_centre)
-    food := game.create_food({0, 0})
+    food := game.create_food({0, 0}, FOOD_SPRITE)
 
     game.place_food(food, &grid, snake)
 

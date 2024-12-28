@@ -1,14 +1,21 @@
 package game
 
 import rl "vendor:raylib"
+import "core:strings"
 
 Food :: struct {
-    position: Vec2i
+    position: Vec2i, 
+    sprite: rl.Texture2D
 }
 
-create_food :: proc(position: Vec2i) -> (new_food : ^Food) {
+create_food :: proc(position: Vec2i, sprite: cstring) -> (new_food : ^Food) {
     new_food = new(Food, context.allocator)
     new_food.position = position
+    
+    if len(sprite) > 0 {
+        new_food.sprite = rl.LoadTexture(sprite)
+    }
+
     return new_food
 }
 
@@ -26,7 +33,12 @@ draw_food :: proc(food: ^Food, sprite_size: i32) {
         return
     }
 
-    draw_sprite(food.position, sprite_size, rl.RED)
+    if &food.sprite == nil {
+        draw_rectangle(food.position, sprite_size, rl.MAGENTA)
+    }
+    else {
+        rl.DrawTextureV(food.sprite, {f32(food.position.x), f32(food.position.y)} * f32(sprite_size), rl.WHITE)
+    }
 }
 
 place_food :: proc(food: ^Food, grid: ^Grid, snake: ^Snake) {
