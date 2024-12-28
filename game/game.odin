@@ -15,7 +15,7 @@ Grid :: struct {
     cell_size: i32
 }
 
-draw_sprite :: proc(position: Vec2i, size: i32, color: rl.Color) {
+draw_rectangle :: proc(position: Vec2i, size: i32, color: rl.Color) {
     rl.DrawRectangle(position.x * size, position.y * size, size, size, color)
 }
 
