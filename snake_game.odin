@@ -58,6 +58,8 @@ main :: proc() {
     for !rl.WindowShouldClose() {
         //Gameplay
         if is_game_over {
+            game.draw_game_over_screen()
+
             if rl.IsKeyDown(.ENTER)
             {
                 game.reset_snake(snake, length = 3, position = grid_centre)
