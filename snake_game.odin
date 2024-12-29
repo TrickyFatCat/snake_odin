@@ -103,6 +103,10 @@ main :: proc() {
 
 		rl.BeginMode2D(camera)
 
+		if ODIN_DEBUG {
+            game.draw_grid(&grid)
+		}
+
 		game.draw_snake(snake, grid.cell_size)
 		game.draw_food(food, grid.cell_size)
 

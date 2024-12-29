@@ -108,3 +108,37 @@ snake_can_eat :: proc(snake: ^Snake, food: ^Food) -> bool {
 
 	return get_head_pos(snake) == food.position
 }
+
+draw_grid :: proc(grid: ^Grid) {
+	if grid == nil {
+		return
+	}
+
+	start_pos: Vec2i
+	end_pos: Vec2i
+	grid_size := grid.size
+	cell_size := grid.cell_size
+	grid_length := grid_size * cell_size
+
+    // Draw Horizontal Lines
+	for x in 0 ..< grid_size.x {
+		for y in 0 ..< grid_size.y {
+			start_pos.x = x * cell_size
+			start_pos.y = y * cell_size
+			end_pos.x = start_pos.x + grid_length.x
+			end_pos.y = start_pos.y
+			rl.DrawLine(start_pos.x, start_pos.y, end_pos.x, end_pos.y, rl.MAGENTA)
+		}
+	}
+
+    // Draw Vertical Lines
+	for y in 0 ..< grid_size.x {
+		for x in 0 ..< grid_size.y {
+			start_pos.x = x * cell_size
+			start_pos.y = y * cell_size
+			end_pos.x = start_pos.x
+			end_pos.y = start_pos.y + grid_length.y
+			rl.DrawLine(start_pos.x, start_pos.y, end_pos.x, end_pos.y, rl.MAGENTA)
+		}
+	}
+}
