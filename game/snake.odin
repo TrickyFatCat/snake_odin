@@ -1,5 +1,6 @@
 package game
 
+import "core:math"
 import rl "vendor:raylib"
 
 Snake :: struct {
@@ -98,28 +99,62 @@ draw_snake :: proc(snake: ^Snake, sprite_size: i32) {
 	last_index := len(&snake.sections) - 1
 	sprite: ^rl.Texture2D
 	section: Vec2i
-	texture_size: rl.Vector2
+	sprite_pos: rl.Vector2
+	rot_deg: f32
+	dir: Vec2i
+	source_rec: rl.Rectangle
+	dest_rec: rl.Rectangle
+	sprite_half_size := f32(sprite_size) * 0.5
+	origin: rl.Vector2 = {sprite_half_size, sprite_half_size}
 
 
 	for i in 0 ..= last_index {
+		section = snake.sections[i]
+
 		switch i {
 		case 0:
 			sprite = &snake.sprites[0]
+			dir = section - snake.sections[i + 1]
 		case last_index:
 			sprite = &snake.sprites[2]
+			dir = snake.sections[i - 1] - section
 		case:
 			sprite = &snake.sprites[1]
+			dir = snake.sections[i - 1] - section
 		}
-
-		section = snake.sections[i]
 
 		if sprite == nil {
 			draw_rectangle(section, sprite_size, rl.MAGENTA)
 			continue
 		}
 
-		texture_size = {f32(section.x), f32(section.y)} * f32(sprite_size)
-		rl.DrawTextureV(sprite^, texture_size, rl.WHITE)
+		rot_deg = math.atan2(f32(dir.y), f32(dir.x)) * math.DEG_PER_RAD
+		sprite_pos = {f32(section.x), f32(section.y)} * f32(sprite_size) + sprite_half_size
+
+		source_rec = {
+			width  = f32(sprite.width),
+			height = f32(sprite.height),
+		}
+
+		dest_rec = {
+			x      = sprite_pos.x,
+			y      = sprite_pos.y,
+			width  = f32(sprite_size),
+			height = f32(sprite_size),
+		}
+
+		rl.DrawTexturePro(sprite^, source_rec, dest_rec, origin, rot_deg, rl.WHITE)
+
+        // Draw debug boxes to see actual snake sections
+		if ODIN_DEBUG {
+			rl.DrawRectangleLines(
+				section.x * sprite_size,
+				section.y * sprite_size,
+				sprite_size,
+				sprite_size,
+				rl.GREEN,
+			)
+		}
 	}
 }
 
