@@ -1,6 +1,5 @@
 package game
 
-import "core:strings"
 import rl "vendor:raylib"
 
 Food :: struct {
@@ -41,6 +40,16 @@ draw_food :: proc(food: ^Food, sprite_size: i32) {
 			{f32(food.position.x), f32(food.position.y)} * f32(sprite_size),
 			rl.WHITE,
 		)
+
+		if ODIN_DEBUG {
+			rl.DrawRectangleLines(
+				food.position.x * sprite_size,
+				food.position.y * sprite_size,
+				sprite_size,
+				sprite_size,
+				rl.RED,
+			)
+		}
 	}
 }
 
