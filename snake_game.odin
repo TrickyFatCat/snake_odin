@@ -69,8 +69,6 @@ main :: proc() {
 	for !rl.WindowShouldClose() {
 		//Gameplay
 		if is_game_over {
-			game.draw_game_over_screen()
-
 			if rl.IsKeyDown(.ENTER) {
 				game.reset_snake(snake, length = 3, position = grid_centre)
 				game.place_food(food, &grid, snake)
@@ -104,11 +102,20 @@ main :: proc() {
 		rl.BeginMode2D(camera)
 
 		if ODIN_DEBUG {
-            game.draw_grid(&grid)
+			game.draw_grid(&grid)
 		}
 
 		game.draw_snake(snake, grid.cell_size)
 		game.draw_food(food, grid.cell_size)
+
+		if is_game_over {
+			game.draw_game_over_screen(
+				{0, (WINDOW_HEIGHT - WINDOW_HEIGHT * 0.25) * 0.5},
+				WINDOW_WIDTH,
+				WINDOW_HEIGHT * 0.25,
+				DEFAULT_KEY_HINT,
+			)
+		}
 
 		rl.EndMode2D()
 		rl.EndDrawing()
