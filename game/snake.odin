@@ -104,7 +104,6 @@ draw_snake :: proc(snake: ^Snake, sprite_size: i32) {
             sprite = &snake.sprites[1]
         }
 
-        sprite = &snake.sprites[i]
         section = snake.sections[i]
 
         if sprite == nil {

@@ -16,6 +16,11 @@ DEFAULT_CELL_SIZE :: 16
 
 // Visuals
 FOOD_SPRITE : cstring : "../assets/sprites/sprite_food.png" 
+SNAKE_SPRITES : [3]cstring : {
+    "../assets/sprites/sprite_head.png",
+    "../assets/sprites/sprite_body.png",
+    "../assets/sprites/sprite_tail.png"
+}
 
 main :: proc() {
     // Taken from www.odin-lang.com
@@ -55,7 +60,7 @@ main :: proc() {
 
     is_game_over := false
 
-    snake := game.create_snake(position = grid_centre)
+    snake := game.create_snake(position = grid_centre, sprites = SNAKE_SPRITES)
     food := game.create_food({0, 0}, FOOD_SPRITE)
 
     game.place_food(food, &grid, snake)
