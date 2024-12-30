@@ -57,6 +57,7 @@ main :: proc() {
 	grid: game.Grid = {DEFAULT_GRID_SIZE, DEFAULT_CELL_SIZE}
 	grid_centre := game.get_grid_centre_pos(&grid)
 	canvas_size: i32 = game.calc_canvas_size(&grid)
+	screen_pos: game.Vec2i
 
 	is_game_over := false
 
@@ -107,13 +108,14 @@ main :: proc() {
 
 		game.draw_snake(snake, grid.cell_size)
 		game.draw_food(food, grid.cell_size)
+		// game.draw_score(WINDOW_WIDTH, game.get_score())
 
 		if is_game_over {
+			screen_pos.y = i32(((f32(WINDOW_HEIGHT) - f32(WINDOW_HEIGHT) * 0.25) * 0.5) / camera.zoom)
 			game.draw_game_over_screen(
-				{0, (WINDOW_HEIGHT - WINDOW_HEIGHT * 0.25) * 0.5},
-				WINDOW_WIDTH,
-				WINDOW_HEIGHT * 0.25,
-				DEFAULT_KEY_HINT,
+				screen_pos,
+				i32(f32(WINDOW_WIDTH) / camera.zoom),
+				i32(f32(WINDOW_HEIGHT) * 0.25 / camera.zoom),
 			)
 		}
 
