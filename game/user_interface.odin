@@ -52,6 +52,9 @@ calc_text_x_pos :: proc(text: cstring, width: i32, text_size: i32) -> i32{
 
 draw_score :: proc(position: Vec2i, width: i32, score: i32) {
     score_str := fmt.ctprintf("Score: %i", score)
-    rl.DrawRectangle(position.x, position.y, width, DEFAULT_SCORE_SIZE, rl.BLACK)
     rl.DrawText(score_str, position.x, position.y, DEFAULT_SCORE_SIZE, rl.MAGENTA)
+}
+
+draw_wall :: proc(position: Vec2i, size: Vec2i) {
+    rl.DrawRectangle(position.x, position.y, size.x, size.y, rl.BLACK)
 }

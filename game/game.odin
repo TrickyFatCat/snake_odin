@@ -24,7 +24,7 @@ calc_canvas_size :: proc(grid: ^Grid) -> (canvas_size: i32) {
 		return canvas_size
 	}
 
-	canvas_size = grid.size.y * grid.cell_size
+	canvas_size = (grid.size.y + 2) * grid.cell_size
 	return canvas_size
 }
 
@@ -128,6 +128,7 @@ draw_grid :: proc(grid: ^Grid) {
 			end_pos.x = start_pos.x + grid_length.x
 			end_pos.y = start_pos.y
 			rl.DrawLine(start_pos.x, start_pos.y, end_pos.x, end_pos.y, rl.MAGENTA)
+			rl.DrawRectangle(start_pos.x + cell_size / 2 - 2, start_pos.y + cell_size / 2 - 2, 4, 4, rl.MAGENTA)
 		}
 	}
 

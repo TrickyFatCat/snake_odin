@@ -14,7 +14,7 @@ DEFAULT_TICK_DURATION :: 0.15
 DEFAULT_GRID_SIZE: game.Vec2i : {20, 20}
 DEFAULT_CELL_SIZE :: 16
 
-// Visuals
+// Assets
 FOOD_SPRITE: cstring : "../assets/sprites/sprite_food.png"
 SNAKE_SPRITES: [3]cstring : {
 	"../assets/sprites/sprite_head.png",
@@ -22,8 +22,9 @@ SNAKE_SPRITES: [3]cstring : {
 	"../assets/sprites/sprite_tail.png",
 }
 
+// Game
 main :: proc() {
-	// Taken from www.odin-lang.com
+	// Tracking allocator. Taken from www.odin-lang.com
 	when ODIN_DEBUG {
 		track: mem.Tracking_Allocator
 		mem.tracking_allocator_init(&track, context.allocator)
@@ -57,7 +58,15 @@ main :: proc() {
 	grid: game.Grid = {DEFAULT_GRID_SIZE, DEFAULT_CELL_SIZE}
 	grid_centre := game.get_grid_centre_pos(&grid)
 	canvas_size: i32 = game.calc_canvas_size(&grid)
+	camera_zoom := f32(WINDOW_HEIGHT) / f32(canvas_size)
 	screen_pos: game.Vec2i
+
+	camera := rl.Camera2D {
+		target = {f32(grid.cell_size * grid_centre.x), f32(grid.cell_size * grid_centre.y)},
+		offset = {WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2},
+		zoom   = camera_zoom,
+	}
+
 
 	is_game_over := false
 
@@ -96,10 +105,6 @@ main :: proc() {
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.GRAY)
 
-		camera := rl.Camera2D {
-			zoom = f32(WINDOW_HEIGHT) / f32(canvas_size),
-		}
-
 		rl.BeginMode2D(camera)
 
 		if ODIN_DEBUG {
@@ -108,14 +113,20 @@ main :: proc() {
 
 		game.draw_snake(snake, grid.cell_size)
 		game.draw_food(food, grid.cell_size)
-		// game.draw_score(WINDOW_WIDTH, game.get_score())
+		
+		game.draw_wall({-16, -16}, {(grid.size.x + 2) * grid.cell_size, grid.cell_size})
+		game.draw_wall({-16, -16}, {grid.cell_size, (grid.size.x + 2) * grid.cell_size})
+		game.draw_wall({0, grid.cell_size * (grid.size.y)}, {(grid.size.x + 2) * grid.cell_size,grid.cell_size})
+		game.draw_wall({grid.cell_size * (grid.size.y), 0}, {grid.cell_size, (grid.size.x + 2) * grid.cell_size})
+		game.draw_score({-16, -16}, WINDOW_WIDTH, game.get_score())
 
 		if is_game_over {
-			screen_pos.y = i32(((f32(WINDOW_HEIGHT) - f32(WINDOW_HEIGHT) * 0.25) * 0.5) / camera.zoom)
+			screen_pos.x = -16
+			screen_pos.y = (grid_centre.y - 2) * grid.cell_size
 			game.draw_game_over_screen(
 				screen_pos,
-				i32(f32(WINDOW_WIDTH) / camera.zoom),
-				i32(f32(WINDOW_HEIGHT) * 0.25 / camera.zoom),
+				grid.cell_size * (grid.size.x + 2),
+				grid.cell_size * 4,
 			)
 		}
 
