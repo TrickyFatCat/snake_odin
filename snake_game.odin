@@ -13,6 +13,8 @@ WINDOW_NAME: cstring : "Snake"
 DEFAULT_TICK_DURATION :: 0.15
 DEFAULT_GRID_SIZE: game.Vec2i : {20, 20}
 DEFAULT_CELL_SIZE :: 16
+DEFAULT_CANVAS_OFFSET :: 2
+DEFAULT_UI_POS : game.Vec2i : {-16, -16}
 
 // Assets
 FOOD_SPRITE: cstring : "../assets/sprites/sprite_food.png"
@@ -55,25 +57,28 @@ main :: proc() {
 	//Initialisation
 	tick_timer: f32 = DEFAULT_TICK_DURATION
 
-	grid: game.Grid = {DEFAULT_GRID_SIZE, DEFAULT_CELL_SIZE}
+	grid: game.Grid = {DEFAULT_GRID_SIZE, DEFAULT_CELL_SIZE, DEFAULT_CANVAS_OFFSET}
 	grid_centre := game.get_grid_centre_pos(&grid)
 	canvas_size: i32 = game.calc_canvas_size(&grid)
-	camera_zoom := f32(WINDOW_HEIGHT) / f32(canvas_size)
-	screen_pos: game.Vec2i
+	grid_size_pix := game.get_size_pix(&grid)
 
 	camera := rl.Camera2D {
 		target = {f32(grid.cell_size * grid_centre.x), f32(grid.cell_size * grid_centre.y)},
 		offset = {WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2},
-		zoom   = camera_zoom,
+		zoom   = f32(WINDOW_HEIGHT) / f32(canvas_size),
 	}
-
 
 	is_game_over := false
 
 	snake := game.create_snake(position = grid_centre, sprites = SNAKE_SPRITES)
+	defer game.remove_snake(snake)
+
 	food := game.create_food({0, 0}, FOOD_SPRITE)
+	defer game.remove_food(food)
 
 	game.place_food(food, &grid, snake)
+	//Interface params
+	screen_pos := DEFAULT_UI_POS
 
 	//Main Loop
 	for !rl.WindowShouldClose() {
@@ -96,6 +101,7 @@ main :: proc() {
 			if game.snake_can_eat(snake, food) {
 				game.incrment_snake(snake)
 				game.place_food(food, &grid, snake)
+				game.increase_score()
 			}
 
 			tick_timer = DEFAULT_TICK_DURATION + tick_timer
@@ -113,19 +119,22 @@ main :: proc() {
 
 		game.draw_snake(snake, grid.cell_size)
 		game.draw_food(food, grid.cell_size)
-		
-		game.draw_wall({-16, -16}, {(grid.size.x + 2) * grid.cell_size, grid.cell_size})
-		game.draw_wall({-16, -16}, {grid.cell_size, (grid.size.x + 2) * grid.cell_size})
-		game.draw_wall({0, grid.cell_size * (grid.size.y)}, {(grid.size.x + 2) * grid.cell_size,grid.cell_size})
-		game.draw_wall({grid.cell_size * (grid.size.y), 0}, {grid.cell_size, (grid.size.x + 2) * grid.cell_size})
-		game.draw_score({-16, -16}, WINDOW_WIDTH, game.get_score())
+
+		// Draw Wall
+		screen_pos = DEFAULT_UI_POS
+		game.draw_wall(screen_pos, {grid_size_pix.x , grid.cell_size})
+		game.draw_wall(screen_pos, {grid.cell_size, grid_size_pix.y})
+		game.draw_wall({screen_pos.x, grid.size.x * grid.cell_size}, {grid_size_pix.x, grid.cell_size})
+		game.draw_wall({grid.size.y * grid.cell_size, screen_pos.y}, {grid.cell_size, grid_size_pix.y})
+
+		// Draw Interface
+		game.draw_score(screen_pos, WINDOW_WIDTH, game.get_score())
 
 		if is_game_over {
-			screen_pos.x = -16
 			screen_pos.y = (grid_centre.y - 2) * grid.cell_size
 			game.draw_game_over_screen(
 				screen_pos,
-				grid.cell_size * (grid.size.x + 2),
+				grid_size_pix.x,
 				grid.cell_size * 4,
 			)
 		}
@@ -134,7 +143,5 @@ main :: proc() {
 		rl.EndDrawing()
 	}
 
-	game.remove_snake(snake)
-	game.remove_food(food)
 	rl.CloseWindow()
 }

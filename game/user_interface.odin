@@ -26,7 +26,7 @@ draw_game_over_screen :: proc(position: Vec2i, width, height: i32, key_hint: cst
 
 	text_pos: Vec2i = {
 		position.x + calc_text_x_pos(TEXT_GAME_OVER, width, TEXT_GAME_OVER_SIZE),
-		position.y + (TEXT_GAME_OVER_SIZE + TEXT_HINT_SIZE) / 2,
+		position.y + (TEXT_GAME_OVER_SIZE + TEXT_HINT_SIZE) / 4,
 	}
 
 	rl.DrawText(TEXT_GAME_OVER, text_pos.x, text_pos.y, TEXT_GAME_OVER_SIZE, rl.RED)

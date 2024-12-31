@@ -13,6 +13,7 @@ VEC_RIGHT: Vec2i : {1, 0}
 Grid :: struct {
 	size:      Vec2i,
 	cell_size: i32,
+	canvas_offset: i32
 }
 
 draw_rectangle :: proc(position: Vec2i, size: i32, color: rl.Color) {
@@ -24,7 +25,7 @@ calc_canvas_size :: proc(grid: ^Grid) -> (canvas_size: i32) {
 		return canvas_size
 	}
 
-	canvas_size = (grid.size.y + 2) * grid.cell_size
+	canvas_size = get_size_pix(grid).x
 	return canvas_size
 }
 
@@ -35,6 +36,14 @@ get_grid_centre_pos :: proc(grid: ^Grid) -> (centre_pos: Vec2i) {
 
 	centre_pos = grid.size / 2
 	return centre_pos
+}
+
+get_size_pix :: proc (grid: ^Grid) -> Vec2i {
+	if grid == nil {
+		return VEC_ZERO
+	}
+
+	return (grid.size + grid.canvas_offset) * grid.cell_size
 }
 
 calc_snake_dir :: proc(cur_dir: Vec2i) -> Vec2i {
