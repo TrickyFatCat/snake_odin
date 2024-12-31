@@ -14,7 +14,7 @@ DEFAULT_TICK_DURATION :: 0.15
 DEFAULT_GRID_SIZE: game.Vec2i : {20, 20}
 DEFAULT_CELL_SIZE :: 16
 DEFAULT_CANVAS_OFFSET :: 2
-DEFAULT_UI_POS : game.Vec2i : {-16, -16}
+DEFAULT_UI_POS: game.Vec2i : {-16, -16}
 
 // Assets
 FOOD_SPRITE: cstring : "../assets/sprites/sprite_food.png"
@@ -23,6 +23,8 @@ SNAKE_SPRITES: [3]cstring : {
 	"../assets/sprites/sprite_body.png",
 	"../assets/sprites/sprite_tail.png",
 }
+EAT_SOUND :: "../assets/sounds/sound_eat.wav"
+CRASH_SOUND :: "../assets/sounds/sound_crash.wav"
 
 // Game
 main :: proc() {
@@ -53,6 +55,7 @@ main :: proc() {
 	rl.SetConfigFlags({.VSYNC_HINT})
 	rl.InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_NAME)
 	rl.SetTargetFPS(60)
+	rl.InitAudioDevice()
 
 	//Initialisation
 	tick_timer: f32 = DEFAULT_TICK_DURATION
@@ -71,6 +74,9 @@ main :: proc() {
 
 	is_game_over := false
 
+	game.load_eat_sound(EAT_SOUND)
+	game.load_crash_sound(CRASH_SOUND)
+
 	snake := game.create_snake(position = grid_centre, sprites = SNAKE_SPRITES)
 	food := game.create_food({0, 0}, FOOD_SPRITE)
 	game.place_food(food, &grid, snake)
@@ -79,6 +85,7 @@ main :: proc() {
 	for !rl.WindowShouldClose() {
 		//Gameplay
 		if is_game_over {
+
 			if rl.IsKeyDown(.ENTER) {
 				game.reset_snake(snake, length = 3, position = grid_centre)
 				game.place_food(food, &grid, snake)
@@ -93,10 +100,15 @@ main :: proc() {
 			game.move_snake(snake)
 			is_game_over = game.is_hitting_wall(snake, &grid) || game.is_hitting_self(snake)
 
+			if is_game_over {
+				game.play_crash_sound()
+			}
+
 			if game.snake_can_eat(snake, food) {
 				game.incrment_snake(snake)
 				game.place_food(food, &grid, snake)
 				game.increase_score()
+				game.play_eat_sound()
 			}
 
 			tick_timer = DEFAULT_TICK_DURATION + tick_timer
@@ -117,21 +129,23 @@ main :: proc() {
 
 		// Draw Wall
 		screen_pos = DEFAULT_UI_POS
-		game.draw_wall(screen_pos, {grid_size_pix.x , grid.cell_size})
+		game.draw_wall(screen_pos, {grid_size_pix.x, grid.cell_size})
 		game.draw_wall(screen_pos, {grid.cell_size, grid_size_pix.y})
-		game.draw_wall({screen_pos.x, grid.size.x * grid.cell_size}, {grid_size_pix.x, grid.cell_size})
-		game.draw_wall({grid.size.y * grid.cell_size, screen_pos.y}, {grid.cell_size, grid_size_pix.y})
+		game.draw_wall(
+			{screen_pos.x, grid.size.x * grid.cell_size},
+			{grid_size_pix.x, grid.cell_size},
+		)
+		game.draw_wall(
+			{grid.size.y * grid.cell_size, screen_pos.y},
+			{grid.cell_size, grid_size_pix.y},
+		)
 
 		// Draw Interface
 		game.draw_score(screen_pos, WINDOW_WIDTH, game.get_score())
 
 		if is_game_over {
 			screen_pos.y = (grid_centre.y - 2) * grid.cell_size
-			game.draw_game_over_screen(
-				screen_pos,
-				grid_size_pix.x,
-				grid.cell_size * 4,
-			)
+			game.draw_game_over_screen(screen_pos, grid_size_pix.x, grid.cell_size * 4)
 		}
 
 		rl.EndMode2D()
@@ -140,5 +154,7 @@ main :: proc() {
 
 	game.remove_snake(snake)
 	game.remove_food(food)
+	game.unload_sounds()
+	rl.CloseAudioDevice()
 	rl.CloseWindow()
 }
