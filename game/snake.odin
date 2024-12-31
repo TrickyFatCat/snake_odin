@@ -50,6 +50,10 @@ remove_snake :: proc(snake: ^Snake) -> bool {
 		return false
 	}
 
+	for sprite in snake.sprites {
+		rl.UnloadTexture(sprite)
+	}
+
 	delete(snake.sections)
 	free(snake, context.allocator)
 	return true
@@ -145,7 +149,7 @@ draw_snake :: proc(snake: ^Snake, sprite_size: i32) {
 
 		rl.DrawTexturePro(sprite^, source_rec, dest_rec, origin, rot_deg, rl.WHITE)
 
-        // Draw debug boxes to see actual snake sections
+		// Draw debug boxes to see actual snake sections
 		if ODIN_DEBUG {
 			rl.DrawRectangleLines(
 				section.x * sprite_size,

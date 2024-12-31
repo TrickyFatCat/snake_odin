@@ -61,6 +61,7 @@ main :: proc() {
 	grid_centre := game.get_grid_centre_pos(&grid)
 	canvas_size: i32 = game.calc_canvas_size(&grid)
 	grid_size_pix := game.get_size_pix(&grid)
+	screen_pos := DEFAULT_UI_POS
 
 	camera := rl.Camera2D {
 		target = {f32(grid.cell_size * grid_centre.x), f32(grid.cell_size * grid_centre.y)},
@@ -71,14 +72,8 @@ main :: proc() {
 	is_game_over := false
 
 	snake := game.create_snake(position = grid_centre, sprites = SNAKE_SPRITES)
-	defer game.remove_snake(snake)
-
 	food := game.create_food({0, 0}, FOOD_SPRITE)
-	defer game.remove_food(food)
-
 	game.place_food(food, &grid, snake)
-	//Interface params
-	screen_pos := DEFAULT_UI_POS
 
 	//Main Loop
 	for !rl.WindowShouldClose() {
@@ -143,5 +138,7 @@ main :: proc() {
 		rl.EndDrawing()
 	}
 
+	game.remove_snake(snake)
+	game.remove_food(food)
 	rl.CloseWindow()
 }

@@ -23,6 +23,7 @@ remove_food :: proc(food: ^Food) -> bool {
 		return false
 	}
 
+	rl.UnloadTexture(food.sprite)
 	free(food, context.allocator)
 	return true
 }
